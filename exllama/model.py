@@ -2,7 +2,7 @@ import torch
 from torch import nn
 import torch.nn.functional as F
 from safetensors import safe_open
-import cuda_ext
+from . import cuda_ext
 import json
 import math
 from enum import Enum

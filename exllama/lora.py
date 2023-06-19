@@ -2,7 +2,7 @@ import torch
 import json
 from safetensors.torch import load_file as safe_load_file
 from torch import load as load_file
-from model import ExLlamaConfig, Ex4bitLinear
+from .model import ExLlamaConfig, Ex4bitLinear
 
 class ExLlamaLora:
 
