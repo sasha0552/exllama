@@ -1,7 +1,7 @@
-from model import ExLlama, ExLlamaCache, ExLlamaConfig
+from exllama.model import ExLlama, ExLlamaCache, ExLlamaConfig
 from flask import Flask, request
-from tokenizer import ExLlamaTokenizer
-from generator import ExLlamaGenerator
+from exllama.tokenizer import ExLlamaTokenizer
+from exllama.generator import ExLlamaGenerator
 import os, glob
 
 # Directory containing config.json, tokenizer.model and safetensors file for the model
