@@ -1,3 +1,10 @@
+import sys
+min_version = (3, 9)
+if sys.version_info < min_version:
+    print("")
+    print(f" ## Warning: this project requires Python {min_version[0]}.{min_version[1]} or higher.")
+    print("")
+
 import torch
 from torch import nn
 import torch.nn.functional as F
@@ -791,7 +798,7 @@ class ExLlama:
         torch.cuda.empty_cache()
 
 
-    def forward(self, input_ids, cache, last_id_only = True, preprocess_only = False, lora = None):
+    def forward(self, input_ids, cache, last_id_only = True, preprocess_only = False, lora = None, output_device = None):
 
         # if torch.is_grad_enabled():
         #     raise ValueError("Forward pass called with gradients enabled. Back propagation is not supported yet.")
@@ -799,6 +806,7 @@ class ExLlama:
 
             batch_size, seq_len = input_ids.shape
             past_len = cache.current_seq_len
+            if output_device is None: output_device = input_ids.device
 
             buffer = ExLlamaBuffer(self.config)
 
@@ -822,7 +830,7 @@ class ExLlama:
             # Embeddings
             # TODO: Allow passing input embeddings instead of IDs
 
-            input_ids = _move_tensor(input_ids, "cpu", "input_ids", self.config)
+            input_ids = _move_tensor(input_ids, self.config.device_map.embed_tokens, "input_ids", self.config)
             hidden_states = self.embed_tokens(input_ids)
 
             # Split buffers to devices
@@ -861,7 +869,7 @@ class ExLlama:
             # logits = cuda_ext.matmul_half(hidden_states, self.lm_head_data, cublas = False)
 
             logits = logits.float()
-            logits = _move_tensor(logits, self.config.device_map.embed_tokens, "logits", self.config)
+            logits = _move_tensor(logits, output_device, "logits", self.config)
             return logits
 
 
