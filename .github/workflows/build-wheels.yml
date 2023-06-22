@@ -46,13 +46,6 @@ jobs:
           python -m build -n --wheel
         
       - uses: actions/upload-artifact@v3
-        if: runner.os == 'Linux'
         with:
-          name: 'linux-wheels'
-          path: ./dist/*.whl
-        
-      - uses: actions/upload-artifact@v3
-        if: runner.os == 'Windows'
-        with:
-          name: 'windows-wheels'
+          name: 'wheels'
           path: ./dist/*.whl
