@@ -1,0 +1,41 @@
+name: Build for ArchLinux
+
+on:
+  - workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: archlinux
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Upgrade system
+        shell: bash
+        run: |-
+          pacman --sync --refresh --sysupgrade --noconfirm
+
+      - name: Install required packages
+        shell: bash
+        run: |-
+          pacman --sync --noconfirm --needed python-pytorch-rocm
+
+      - name: Install dependencies
+        shell: bash
+        run: |-
+          python -m pip install build wheel safetensors==0.3.1 sentencepiece>=0.1.97 ninja==1.11.1
+
+      - name: Build package
+        shell: bash
+        run: |-
+          PYTORCH_ROCM_ARCH=gfx803 python -m build --no-isolation --wheel
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          path: |-
+            dist/*.whl
