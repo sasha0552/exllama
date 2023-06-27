@@ -20,9 +20,9 @@ jobs:
         uses: docker://archlinux:latest
         with:
           args: |-
-            pacman --sync --refresh --sysupgrade --noconfirm python-pytorch-rocm
-            python -m pip install build wheel
-            python -m pip install safetensors==0.3.1 sentencepiece>=0.1.97 ninja==1.11.1
+            pacman --sync --refresh --sysupgrade --noconfirm python-pytorch-rocm &&
+            python -m pip install build wheel &&
+            python -m pip install safetensors==0.3.1 sentencepiece>=0.1.97 ninja==1.11.1 &&
             PYTORCH_ROCM_ARCH=gfx803 python -m build --no-isolation --wheel
 
       - name: Upload artifacts
