@@ -7,32 +7,36 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    container:
-      image: archlinux
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+      - name: Cleanup system
+        uses: rokibhasansagar/slimhub_actions@main
+
       - name: Upgrade system
-        shell: bash
-        run: |-
-          pacman --sync --refresh --sysupgrade --noconfirm
+        uses: docker://archlinux:latest
+        with:
+          args: |-
+            pacman --sync --refresh --sysupgrade --noconfirm
 
       - name: Install required packages
-        shell: bash
-        run: |-
-          pacman --sync --noconfirm --needed python-pytorch-rocm
+        uses: docker://archlinux:latest
+        with:
+          args: |-
+            pacman --sync --noconfirm --needed python-pytorch-rocm
 
       - name: Install dependencies
-        shell: bash
-        run: |-
-          python -m pip install build wheel safetensors==0.3.1 sentencepiece>=0.1.97 ninja==1.11.1
+        uses: docker://archlinux:latest
+        with:
+          args: |-
+            python -m pip install build wheel safetensors==0.3.1 sentencepiece>=0.1.97 ninja==1.11.1
 
       - name: Build package
-        shell: bash
-        run: |-
-          PYTORCH_ROCM_ARCH=gfx803 python -m build --no-isolation --wheel
+        uses: docker://archlinux:latest
+        with:
+          args: |-
+            PYTORCH_ROCM_ARCH=gfx803 python -m build --no-isolation --wheel
 
       - name: Upload artifacts
         uses: actions/upload-artifact@v3
